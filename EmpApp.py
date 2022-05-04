@@ -3,6 +3,7 @@ from pymysql import connections
 import os
 import boto3
 from config import *
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -254,14 +255,14 @@ def GetEmpId():
 #add attendance
 @app.route("/empattendance", methods=['POST'])
 def EmpAttandance():
-   
+    #auto-increment att_id
     emp_id = request.form['emp_id']
     now = datetime.now()
     date = now.strftime("%Y-%m-%d")
     time = now.strftime("%H:%M:%S")
     status = request.form['attstatus']
-
-    insert_sql = "INSERT INTO attendance VALUES (%s, %s, %s, %s)"
+    
+    insert_sql = "INSERT INTO attendance (emp_id, date, time, status) VALUES (%s, %s, %s, %s)"
     cursor = db_conn.cursor()
     
     try:
@@ -275,7 +276,7 @@ def EmpAttandance():
     finally:
         cursor.close()
 
-    return render_template('Index.html', status=empstatus) #currently no attendanceOutput.html or any similiar page
+    return render_template('AttendanceList.html', status=empstatus) #currently no attendanceOutput.html or any similiar page
 
 #get payroll
 @app.route("/getpay/<string:id>", methods=['GET','POST'])
